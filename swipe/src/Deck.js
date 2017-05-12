@@ -5,16 +5,17 @@ class Deck extends Component {
   constructor(props) {
     super(props);
 
+    const position = new Animated.ValueXY();
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gesture) => {
-        console.log(gesture);
+        position.setValue({ x: gesture.dx, y: gesture.dy });
       },
       onPanResponderRelease: () => {}
     });
 
-    // Probably not the best idea to assign this to state, but for the sake of following docs:
-    this.state = { panResponder };
+    // Probably not the best idea to assign either of these to state (as they mutate, and we don't use setState), but for the sake of following docs we will:
+    this.state = { panResponder, position };
   }
 
   renderCards() {
@@ -25,9 +26,12 @@ class Deck extends Component {
 
   render() {
     return (
-      <View {...this.state.panResponder.panHandlers}>
+      <Animated.View 
+        style={this.state.position.getLayout()}
+        {...this.state.panResponder.panHandlers}
+      >
         {this.renderCards()}
-      </View>
+      </Animated.View>
     );
   }
 }
